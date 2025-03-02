@@ -15,4 +15,4 @@ export interface MenuCategory {
 
 export interface Menu {
     categories: MenuCategory[];
-} 
+}

@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
-import { HomeScreenComponent } from './components/home-screen.component';
-import { CameraScreenComponent } from './components/camera-screen.component';
-import { ProcessingScreenComponent } from './components/processing-screen.component';
-import { MenuListComponent } from './components/menu-list.component';
-import { DishDetailsComponent } from './components/dish-details.component';
+import { HomeScreenComponent } from './components/home-screen/home-screen.component';
+import { CameraScreenComponent } from './components/camera-screen/camera-screen.component';
+import { ProcessingScreenComponent } from './components/processing-screen/processing-screen.component';
+import { MenuListComponent } from './components/menu-list/menu-list.component';
+import { DishDetailsComponent } from './components/dish-details/dish-details.component';
 
 export const routes: Routes = [
     { path: '', component: HomeScreenComponent },

@@ -1,0 +1,30 @@
+<div class="container">
+    <div class="logo">
+        <img
+            src="assets/icons/icon-512x512.png"
+            alt="Logo"
+        >
+        <h1>Menu Translator</h1>
+    </div>
+
+    <div class="buttons">
+        <button
+            mat-raised-button
+            color="primary"
+            type="button"
+            (click)="takePhoto()"
+        >
+            <mat-icon>camera_alt</mat-icon>
+            Take Photo
+        </button>
+
+        <button
+            mat-button
+            type="button"
+            (click)="selectPhoto()"
+        >
+            <mat-icon>photo_library</mat-icon>
+            Select from Gallery
+        </button>
+    </div>
+</div>

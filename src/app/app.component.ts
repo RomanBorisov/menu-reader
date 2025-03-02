@@ -7,12 +7,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     selector: 'app-root',
     standalone: true,
     imports: [CommonModule, RouterOutlet, MatToolbarModule],
-    template: `
-        <mat-toolbar color="primary">
-            <span>Menu Translator</span>
-        </mat-toolbar>
-        <router-outlet></router-outlet>
-    `
+    templateUrl: './app.component.html',
 })
 export class AppComponent {
 }

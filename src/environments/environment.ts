@@ -30,4 +30,4 @@ export const environment = {
     - (!) ONLY JSON IS ALLOWED as an answer. No explanation, semicolons, other text and any other symbols are allowed! 
   `,
     unsplashApiKey: 'YOUR_UNSPLASH_API_KEY'
-}; 
+};
