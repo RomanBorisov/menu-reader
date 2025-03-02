@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MenuService } from '../../services/menu.service';
+import { toProcessing } from '../../services/router.service';
 
 @Component({
     selector: 'app-camera-screen',
@@ -43,7 +44,7 @@ export class CameraScreenComponent implements OnDestroy, OnInit {
             canvas.getContext('2d')?.drawImage(video, 0, 0);
             const imageBase64 = canvas.toDataURL('image/jpeg');
             this._menuService.setCurrentImage(imageBase64);
-            this._router.navigate(['/processing']);
+            this._router.navigate(toProcessing);
         }
     }
 

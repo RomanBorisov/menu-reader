@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, from, map, Observable, of, switchMap, mergeMap, toArray, forkJoin } from 'rxjs';
+import { HttpHeaders } from '@angular/common/http';
+import { BehaviorSubject, forkJoin, from, map, mergeMap, Observable, of, switchMap, toArray } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Menu } from '../interfaces/menu.interface';
 import OpenAI from 'openai';
+import { RestService } from './rest.service';
 
 @Injectable({
     providedIn: 'root'
@@ -22,7 +23,9 @@ export class MenuService {
         dangerouslyAllowBrowser: true  // Note: Only use this in development
     });
 
-    constructor(private _http: HttpClient) {
+    constructor(
+        private _rest: RestService
+    ) {
         this.currentImage$ = this._currentImageSource.asObservable();
         this.menuData$ = this._menuDataSource.asObservable();
     }
@@ -43,9 +46,9 @@ export class MenuService {
         // const headers = new HttpHeaders()
         //     .set('Authorization', `Client-ID ${environment.unsplashApiKey}`);
         //
-        // return this._http.get<any>(
+        // return this._rest.restGET(
         //     `https://api.unsplash.com/search/photos?query=${encodeURIComponent(dishName + ' food')}&per_page=5`,
-        //     { headers }
+        //     { ...headers }
         // ).pipe(
         //     map((response) => response.results.map((result: any) => result.urls.regular))
         // );
@@ -53,7 +56,7 @@ export class MenuService {
 
     private _analyzeMenu(imageBase64: string): Observable<Menu> {
         return from(this._openai.chat.completions.create({
-            model: 'gpt-4o-mini',
+            model: environment.model,
             messages: [
                 {
                     role: 'user',
@@ -83,9 +86,9 @@ export class MenuService {
 
     private _enrichMenuWithImages(menu: Menu): Observable<Menu> {
         const enrichedMenu = { ...menu };
-        const categoryObservables = menu.categories.map(category => 
+        const categoryObservables = menu.categories.map(category =>
             from(category.items).pipe(
-                mergeMap(item => 
+                mergeMap(item =>
                     this.getImagesForDish(item.name).pipe(
                         map(images => ({ ...item, images }))
                     )

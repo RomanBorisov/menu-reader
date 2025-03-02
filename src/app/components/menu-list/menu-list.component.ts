@@ -6,6 +6,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { Menu, MenuItem } from '../../interfaces/menu.interface';
 import { MenuService } from '../../services/menu.service';
 import { Observable } from 'rxjs';
+import { toApp, toDish } from '../../services/router.service';
 
 @Component({
     selector: 'app-menu-list',
@@ -28,13 +29,13 @@ export class MenuListComponent implements OnInit {
 
         this.menu$.subscribe((menu: Menu | null) => {
             if (!menu) {
-                this._router.navigate(['/']);
+                this._router.navigate(toApp);
             }
         });
     }
 
     public openDishDetails(item: MenuItem) {
         // Store the item in service or pass via state
-        this._router.navigate(['/dish', btoa(item.name)]);
+        this._router.navigate([...toDish, btoa(item.name)]);
     }
 }

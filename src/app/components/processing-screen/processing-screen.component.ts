@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MenuService } from '../../services/menu.service';
+import { toMenu } from '../../services/router.service';
 
 @Component({
     selector: 'app-processing-screen',
@@ -20,7 +21,7 @@ export class ProcessingScreenComponent implements OnInit {
 
     public ngOnInit() {
         this._menuService.processMenu().subscribe({
-            next: () => this._router.navigate(['/menu']),
+            next: () => this._router.navigate(toMenu),
             error: (err) => console.error('Error processing menu:', err)
         });
     }

@@ -1,17 +1,19 @@
-<div class="container">
-    <div class="logo">
-        <img
-            src="assets/icons/icon-512x512.png"
-            alt="Logo"
-        >
-        <h1>Menu Translator</h1>
+<div class="home-screen__container">
+    <div class="home-screen__logo-container">
+        <app-image
+            class="home-screen__logo-image"
+            [src]="'./assets/logo.jpg'"
+            [alt]="'Logo'"
+        ></app-image>
+        <h1 class="home-screen__title">Menu Translator</h1>
     </div>
 
-    <div class="buttons">
+    <div class="home-screen__buttons">
         <button
             mat-raised-button
             color="primary"
             type="button"
+            class="home-screen__button"
             (click)="takePhoto()"
         >
             <mat-icon>camera_alt</mat-icon>
@@ -19,8 +21,9 @@
         </button>
 
         <button
-            mat-button
+            mat-raised-button
             type="button"
+            class="home-screen__button"
             (click)="selectPhoto()"
         >
             <mat-icon>photo_library</mat-icon>

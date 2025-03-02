@@ -1,4 +1,8 @@
-/* You can add global styles to this file, and also import other style files */
+@use "reset";
+
+:root {
+    --row-gap: 16px;
+}
 
 html, body {
     height: 100%;
@@ -7,4 +11,17 @@ html, body {
 body {
     margin: 0;
     font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.row {
+    display: flex;
+    gap: var(--row-gap);
+
+    &__spacer {
+        flex-grow: 1;
+    }
+}
+
+.clickable {
+    cursor: pointer;
 }
