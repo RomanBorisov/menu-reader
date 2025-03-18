@@ -1,15 +1,12 @@
-<div
-    class="dish-container"
-    *ngIf="dish$ | async as dish"
->
-    <div class="image-gallery">
+@if (dish$ | async; as dish) {
+    <div class="dish-detail__gallery">
         @for (image of dish.images; track $index) {
-            <img
+            <app-image
+                class="dish-detail__gallery-item"
                 [src]="image"
                 [alt]="dish.name"
-            >
+            />
         }
-
     </div>
 
     <mat-card>
@@ -19,8 +16,8 @@
         </mat-card-header>
 
         <mat-card-content>
-            <h3>Description</h3>
-            <p class="description">{{ dish.description }}</p>
+            <h3 class="dish-detail__info-item-heading">Description</h3>
+            <p class="dish-detail__info-item">{{ dish.description }}</p>
 
             <h3>Ingredients</h3>
             <mat-chip-set>
@@ -31,8 +28,8 @@
                 }
             </mat-chip-set>
 
-            <h3>Allergens</h3>
-            <mat-chip-set>
+            <h3 class="dish-detail__info-item-heading">Allergens</h3>
+            <mat-chip-set class="dish-detail__allergens">
                 @for (allergen of dish.allergens; track $index) {
                     <mat-chip color="warn">
                         {{ allergen }}
@@ -40,8 +37,8 @@
                 }
             </mat-chip-set>
 
-            <h3>History</h3>
-            <p class="history">{{ dish.history }}</p>
+            <h3 class="dish-detail__info-item-heading">History</h3>
+            <p class="dish-detail__info-item">{{ dish.history }}</p>
         </mat-card-content>
     </mat-card>
-</div>
+}

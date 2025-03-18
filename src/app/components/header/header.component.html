@@ -9,7 +9,7 @@
     <div class="row">
         <a
             mat-button
-            [routerLink]="toApp"
+            (click)="navigateToHomeAndCleanProcessedOrder()"
             routerLinkActive="active"
         >
             Home

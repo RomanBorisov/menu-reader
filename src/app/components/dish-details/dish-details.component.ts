@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -7,13 +7,18 @@ import { MenuService } from '../../services/menu.service';
 import { map, switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { MenuItem } from '../../interfaces/menu.interface';
+import { ImageComponent } from '../image/image.component';
 
 @Component({
     selector: 'app-dish-details',
     standalone: true,
-    imports: [CommonModule, MatCardModule, MatChipsModule],
+    imports: [CommonModule, MatCardModule, MatChipsModule, ImageComponent],
     templateUrl: './dish-details.component.html',
     styleUrl: './dish-details.component.scss',
+    host: {
+        class: 'dish-detail'
+    },
+    encapsulation: ViewEncapsulation.None
 })
 export class DishDetailsComponent implements OnInit {
     public dish$!: Observable<MenuItem | null>;
@@ -33,6 +38,7 @@ export class DishDetailsComponent implements OnInit {
                         if (!menu) {
                             return null;
                         }
+
                         for (const category of menu.categories) {
                             const found = category.items.find((item) => item.name === dishName);
                             if (found) {
@@ -43,7 +49,5 @@ export class DishDetailsComponent implements OnInit {
                     })
                 );
             }));
-
-        // Load dish details from service using route params
     }
 }

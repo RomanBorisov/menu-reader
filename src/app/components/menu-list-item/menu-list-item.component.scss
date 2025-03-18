@@ -1,0 +1,23 @@
+.menu-list-item {
+    cursor: pointer;
+    display: block;
+    height: 100%;
+
+    &__card {
+        height: 100%;
+        display: grid;
+        gap: 12px;
+        overflow: hidden;
+    }
+
+    &__body {
+        display: grid !important;
+        gap: 8px;
+    }
+
+    &__price {
+        font-weight: bold;
+        color: #666666;
+    }
+
+}

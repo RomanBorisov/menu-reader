@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,11 +12,18 @@ import { toProcessing } from '../../services/router.service';
     imports: [CommonModule, MatButtonModule, MatIconModule],
     templateUrl: './camera-screen.component.html',
     styleUrl: 'camera-screen.component.scss',
+    host: {
+        class: 'camera-screen'
+    },
+    encapsulation: ViewEncapsulation.None
 })
 export class CameraScreenComponent implements OnDestroy, OnInit {
     private _stream: MediaStream | null = null;
 
-    constructor(private _router: Router, private _menuService: MenuService) {
+    constructor(
+        private _router: Router,
+        private _menuService: MenuService
+    ) {
     }
 
     public ngOnInit() {

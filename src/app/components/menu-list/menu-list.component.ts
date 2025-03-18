@@ -1,22 +1,29 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { Menu, MenuItem } from '../../interfaces/menu.interface';
 import { MenuService } from '../../services/menu.service';
-import { Observable } from 'rxjs';
-import { toApp, toDish } from '../../services/router.service';
+import { toDish, toHome } from '../../services/router.service';
+import { Subs } from '../../services/subs';
+import { MenuListItemComponent } from '../menu-list-item/menu-list-item.component';
 
 @Component({
     selector: 'app-menu-list',
     standalone: true,
-    imports: [CommonModule, MatCardModule, MatExpansionModule],
+    imports: [CommonModule, MatCardModule, MatExpansionModule, MenuListItemComponent],
     templateUrl: './menu-list.component.html',
     styleUrl: './menu-list.component.scss',
+    encapsulation: ViewEncapsulation.None,
+    host: {
+        class: 'menu-list'
+    }
 })
-export class MenuListComponent implements OnInit {
-    public menu$!: Observable<Menu | null>;
+export class MenuListComponent implements OnInit, OnDestroy {
+    public menu: Menu | null = null;
+
+    private _subs = new Subs();
 
     constructor(
         private _router: Router,
@@ -25,17 +32,20 @@ export class MenuListComponent implements OnInit {
     }
 
     public ngOnInit() {
-        this.menu$ = this._menuService.menuData$;
-
-        this.menu$.subscribe((menu: Menu | null) => {
+        this._subs.add = this._menuService.menuData$.subscribe((menu) => {
             if (!menu) {
-                this._router.navigate(toApp);
+                this._router.navigate(toHome);
             }
+
+            this.menu = menu;
         });
     }
 
+    public ngOnDestroy() {
+        this._subs.unsubscribe();
+    }
+
     public openDishDetails(item: MenuItem) {
-        // Store the item in service or pass via state
         this._router.navigate([...toDish, btoa(item.name)]);
     }
 }

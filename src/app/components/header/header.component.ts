@@ -1,9 +1,10 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { MatToolbar } from '@angular/material/toolbar';
 import { LogoComponent } from '../logo/logo.component';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLinkActive } from '@angular/router';
 import { MatAnchor } from '@angular/material/button';
-import { toApp } from '../../services/router.service';
+import { toHome } from '../../services/router.service';
+import { MenuService } from '../../services/menu.service';
 
 @Component({
     selector: 'app-header',
@@ -11,7 +12,6 @@ import { toApp } from '../../services/router.service';
         MatToolbar,
         LogoComponent,
         RouterLinkActive,
-        RouterLink,
         MatAnchor
     ],
     templateUrl: './header.component.html',
@@ -22,5 +22,18 @@ import { toApp } from '../../services/router.service';
     encapsulation: ViewEncapsulation.None
 })
 export class HeaderComponent {
-    protected readonly toApp = toApp;
+
+    constructor(
+        private _router: Router,
+        private _menuService: MenuService
+    ) {
+    }
+
+    public navigateToHomeAndCleanProcessedOrder() {
+        // TODO add a confirmation dialog before navigating to home
+        this._router.navigate(toHome).then(() => {
+            this._menuService.clean()
+        });
+
+    }
 }

@@ -1,0 +1,18 @@
+<mat-card
+    class="menu-list-item__card"
+    (click)="openDishDetails(item)"
+>
+    <app-image
+        *ngIf="item.images?.length"
+        class="menu-list-item__image"
+        [src]="item.images![0]"
+        [alt]="item.name"
+    ></app-image>
+
+    <mat-card-content
+        class="menu-list-item__body"
+    >
+        <h3>{{ item.name }}</h3>
+        <div>Price: <span class="menu-list-item__price">{{ item.price }}</span></div>
+    </mat-card-content>
+</mat-card>

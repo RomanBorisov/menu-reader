@@ -1,43 +1,66 @@
 import { Injectable } from '@angular/core';
-import { HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, forkJoin, from, map, mergeMap, Observable, of, switchMap, toArray } from 'rxjs';
+import { BehaviorSubject, filter, forkJoin, from, map, mergeMap, Observable, of, switchMap, tap, toArray } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Menu } from '../interfaces/menu.interface';
 import OpenAI from 'openai';
 import { RestService } from './rest.service';
+import { Subs } from './subs';
+import { Router } from '@angular/router';
+
+export const PROCESSED_MENU_KEY = 'processed-menu';
 
 @Injectable({
     providedIn: 'root'
 })
 export class MenuService {
-    public currentImage$: Observable<string>;
+    public currentImage$: Observable<string | null>;
 
     public menuData$: Observable<Menu | null>;
 
-    private _currentImageSource = new BehaviorSubject<string>('');
+    private _currentImageSource$ = new BehaviorSubject<string | null>(null);
 
-    private _menuDataSource = new BehaviorSubject<Menu | null>(null);
+    private _menuDataSource$ = new BehaviorSubject<Menu | null>(null);
 
     private _openai = new OpenAI({
         apiKey: environment.openaiApiKey,
-        dangerouslyAllowBrowser: true  // Note: Only use this in development
+        dangerouslyAllowBrowser: true
     });
 
+    private _subs = new Subs();
+
     constructor(
-        private _rest: RestService
+        private _rest: RestService,
+        private _router: Router
     ) {
-        this.currentImage$ = this._currentImageSource.asObservable();
-        this.menuData$ = this._menuDataSource.asObservable();
+        this.currentImage$ = this._currentImageSource$.asObservable();
+        this.menuData$ = this._menuDataSource$.asObservable();
     }
 
     public setCurrentImage(imageBase64: string) {
-        this._currentImageSource.next(imageBase64);
+        this._currentImageSource$.next(imageBase64);
+    }
+
+    public init() {
+        if (!!localStorage.getItem(PROCESSED_MENU_KEY)) {
+            this._menuDataSource$.next(JSON.parse(localStorage.getItem(PROCESSED_MENU_KEY)!));
+            return;
+        }
+    }
+
+    public clean() {
+        this._currentImageSource$.next(null);
+        this._menuDataSource$.next(null);
+        localStorage.removeItem(PROCESSED_MENU_KEY);
     }
 
     public processMenu(): Observable<Menu> {
         return this.currentImage$.pipe(
+            filter((imageBase64) => !!imageBase64),
+            tap(console.log),
+            tap(() => localStorage.removeItem(PROCESSED_MENU_KEY)),
             switchMap((imageBase64) => this._analyzeMenu(imageBase64)),
-            switchMap((menu) => this._enrichMenuWithImages(menu))
+            switchMap((menu) => this._enrichMenuWithImages(menu)),
+            tap((menu) => localStorage.setItem(PROCESSED_MENU_KEY, JSON.stringify(menu))),
         );
     }
 
@@ -77,7 +100,7 @@ export class MenuService {
                     ? jsonMatch[1].trim()
                     : content!.trim();
                 const menu = JSON.parse(cleanedJson);
-                this._menuDataSource.next(menu);
+                this._menuDataSource$.next(menu);
 
                 return menu;
             })
@@ -86,15 +109,15 @@ export class MenuService {
 
     private _enrichMenuWithImages(menu: Menu): Observable<Menu> {
         const enrichedMenu = { ...menu };
-        const categoryObservables = menu.categories.map(category =>
+        const categoryObservables = menu.categories.map((category) =>
             from(category.items).pipe(
-                mergeMap(item =>
+                mergeMap((item) =>
                     this.getImagesForDish(item.name).pipe(
-                        map(images => ({ ...item, images }))
+                        map((images) => ({ ...item, images }))
                     )
                 ),
                 toArray(),
-                map(enrichedItems => ({
+                map((enrichedItems) => ({
                     ...category,
                     items: enrichedItems
                 }))
@@ -102,9 +125,9 @@ export class MenuService {
         );
 
         return forkJoin(categoryObservables).pipe(
-            map(enrichedCategories => {
+            map((enrichedCategories) => {
                 enrichedMenu.categories = enrichedCategories;
-                this._menuDataSource.next(enrichedMenu);
+                this._menuDataSource$.next(enrichedMenu);
                 return enrichedMenu;
             })
         );

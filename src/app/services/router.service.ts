@@ -8,12 +8,11 @@ export enum RootRoutes {
     Dish = 'dish'
 }
 
-export const toApp = [`/${RootRoutes.Home}`];
-export const toCamera = [...toApp, RootRoutes.Camera];
-export const toProcessing = [...toApp, RootRoutes.Processing];
-export const toMenu = [...toApp, RootRoutes.Menu];
-export const toDish = [...toApp, RootRoutes.Dish];
-
+export const toHome = [`/${RootRoutes.Home}`];
+export const toCamera = [...toHome, RootRoutes.Camera];
+export const toProcessing = [...toHome, RootRoutes.Processing];
+export const toMenu = [...toHome, RootRoutes.Menu];
+export const toDish = [...toHome, RootRoutes.Dish];
 
 @Injectable({
     providedIn: 'root'

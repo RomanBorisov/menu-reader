@@ -1,24 +1,11 @@
-<div class="menu-container">
-    <mat-accordion>
-        @for (category of (menu$ | async)?.categories || []; track $index) {
-            <div class="items-grid">
-                @for (item of category.items; track $index) {
-                    <mat-card
-                        (click)="openDishDetails(item)"
-                    >
-                        <img
-                            *ngIf="item.images?.length"
-                            mat-card-image
-                            [src]="item.images?.[0]"
-                            [alt]="item.name"
-                        >
-                        <mat-card-content>
-                            <h3>{{ item.name }}</h3>
-                            <p class="price">{{ item.price }}</p>
-                        </mat-card-content>
-                    </mat-card>
-                }
-            </div>
-        }
-    </mat-accordion>
-</div>
+@if (menu) {
+    @for (category of menu.categories; track $index) {
+        <div class="menu-list__grid">
+            @for (item of category.items; track $index) {
+                <app-menu-list-item
+                    [item]="item"
+                ></app-menu-list-item>
+            }
+        </div>
+    }
+}

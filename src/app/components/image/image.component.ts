@@ -7,7 +7,7 @@ import { Component, Input } from '@angular/core';
     styleUrl: './image.component.scss'
 })
 export class ImageComponent {
-    @Input({ required: true }) src!: string;
+    @Input({ required: true }) public src!: string;
 
-    @Input() alt: string | null = null;
+    @Input() public alt: string | null = null;
 }
