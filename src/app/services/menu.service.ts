@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, filter, forkJoin, from, map, mergeMap, Observable, of, switchMap, tap, toArray } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Menu } from '../interfaces/menu.interface';
-import OpenAI from 'openai';
 import { RestService } from './rest.service';
 import { Subs } from './subs';
 import { Router } from '@angular/router';
@@ -20,11 +19,6 @@ export class MenuService {
     private _currentImageSource$ = new BehaviorSubject<string | null>(null);
 
     private _menuDataSource$ = new BehaviorSubject<Menu | null>(null);
-
-    private _openai = new OpenAI({
-        apiKey: environment.openaiApiKey,
-        dangerouslyAllowBrowser: true
-    });
 
     private _subs = new Subs();
 
@@ -55,8 +49,7 @@ export class MenuService {
 
     public processMenu(): Observable<Menu> {
         return this.currentImage$.pipe(
-            filter((imageBase64) => !!imageBase64),
-            tap(console.log),
+            filter((imageBase64): imageBase64 is string => !!imageBase64),
             tap(() => localStorage.removeItem(PROCESSED_MENU_KEY)),
             switchMap((imageBase64) => this._analyzeMenu(imageBase64)),
             switchMap((menu) => this._enrichMenuWithImages(menu)),
@@ -66,6 +59,7 @@ export class MenuService {
 
     public getImagesForDish(dishName: string): Observable<string[]> {
         return of(['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcUfB45LB_uSuHtaPofscfJcUnRprRsUz7IA&s']);
+        // Commented code for possible future use of Unsplash API
         // const headers = new HttpHeaders()
         //     .set('Authorization', `Client-ID ${environment.unsplashApiKey}`);
         //
@@ -78,30 +72,35 @@ export class MenuService {
     }
 
     private _analyzeMenu(imageBase64: string): Observable<Menu> {
-        return from(this._openai.chat.completions.create({
-            model: environment.model,
-            messages: [
-                {
-                    role: 'user',
-                    content: [
-                        { type: 'text', text: environment.openaiPrompt },
-                        { type: 'image_url', image_url: { url: imageBase64 } }
-                    ]
-                }
-            ],
-            max_tokens: 4096
-        })).pipe(
-            map((response) => {
-                const content = response.choices[0].message.content;
-                const jsonMatch = content
-                    ? content.match(/^```json\s*([\s\S]*?)\s*```$/)
-                    : null;
-                const cleanedJson = jsonMatch
-                    ? jsonMatch[1].trim()
-                    : content!.trim();
-                const menu = JSON.parse(cleanedJson);
-                this._menuDataSource$.next(menu);
+        // Prepare the image
+        // Remove the prefix data:image/jpeg;base64, if present
+        const base64Data = imageBase64.includes('base64,')
+            ? imageBase64.split('base64,')[1]
+            : imageBase64;
 
+        // Create FormData for file upload
+        const formData = new FormData();
+
+        // Convert Base64 to Blob
+        const byteCharacters = atob(base64Data);
+        const byteArrays = [];
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteArrays.push(byteCharacters.charCodeAt(i));
+        }
+        const byteArray = new Uint8Array(byteArrays);
+        const blob = new Blob([byteArray], { type: 'image/jpeg' });
+
+        // Add blob to FormData
+        formData.append('image', blob, 'menu.jpg');
+
+        // Send request to Django backend
+        return this._rest.restPOST(
+            `${environment.apiBaseUrl}/process-image/`,
+            formData
+        ).pipe(
+            map((response: any) => {
+                const menu = JSON.parse(response.result);
+                this._menuDataSource$.next(menu);
                 return menu;
             })
         );

@@ -1,59 +1,92 @@
-# MenuTranslator
+# Menu Translator
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.0.5.
+An application for translating and analyzing restaurant menus using computer vision and artificial intelligence technologies.
 
-## Development server
+## Project Structure
 
-To start a local development server, run:
+The project consists of two main parts:
 
-```bash
-ng serve
+1. **Frontend (Angular)** - A client application that allows users to take a photo of a menu or upload an image, send it for processing, and receive a detailed analysis.
+
+2. **Backend (Django)** - A server-side component that processes requests from the frontend, interacts with the OpenAI API, and returns analysis results.
+
+```
+/project-root/
+    /menu-angular/         # Angular application
+    /openai-backend/       # Django backend
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Running the Project
 
-## Code scaffolding
+### Starting the Backend (Django)
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+1. Navigate to the openai-backend directory:
+   ```bash
+   cd openai-backend
+   ```
 
-```bash
-ng generate component component-name
-```
+2. Create and activate a virtual environment:
+   ```bash
+   python -m venv venv
+   # On Windows
+   .\venv\Scripts\activate
+   # On macOS/Linux
+   source venv/bin/activate
+   ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-```bash
-ng generate --help
-```
+4. Create a .env file from the template and configure the API key:
+   ```bash
+   cp .env.example .env
+   # Edit .env and add OPENAI_API_KEY
+   ```
 
-## Building
+5. Apply migrations:
+   ```bash
+   python manage.py migrate
+   ```
 
-To build the project run:
+6. Start the Django server:
+   ```bash
+   python manage.py runserver
+   ```
 
-```bash
-ng build
-```
+### Starting the Frontend (Angular)
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+1. Navigate to the Angular project directory:
+   ```bash
+   cd menu-angular
+   ```
 
-## Running unit tests
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+3. Start the application:
+   ```bash
+   npm start
+   ```
 
-```bash
-ng test
-```
+4. Open the application in a browser:
+   ```
+   http://localhost:4200
+   ```
 
-## Running end-to-end tests
+## Frontend and Backend Interaction
 
-For end-to-end (e2e) testing, run:
+1. The frontend captures a menu image from the camera or gallery
+2. The image is sent to the backend (`http://localhost:8000/api/process-image/`)
+3. The backend processes the image using the OpenAI API
+4. The backend returns the result in JSON format with information about the dishes
+5. The frontend displays the results in a user-friendly way
 
-```bash
-ng e2e
-```
+## Security Notes
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- The OpenAI API key is stored only on the backend
+- CORS is configured to allow requests only from trusted sources (in development - localhost:4200)
+- In production mode, it is recommended to configure HTTPS and additional security measures
