@@ -1,17 +1,14 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, filter, forkJoin, from, map, mergeMap, Observable, of, switchMap, tap, toArray } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { BehaviorSubject, filter, forkJoin, from, map, mergeMap, Observable, switchMap, tap, toArray } from 'rxjs';
 import { Menu } from '../interfaces/menu.interface';
-import { RestService } from './rest.service';
-import { Subs } from './subs';
-import { Router } from '@angular/router';
+import { ProcessImageService } from '../services/process-image.service';
 
 export const PROCESSED_MENU_KEY = 'processed-menu';
 
 @Injectable({
     providedIn: 'root'
 })
-export class MenuService {
+export class MenuState {
     public currentImage$: Observable<string | null>;
 
     public menuData$: Observable<Menu | null>;
@@ -20,11 +17,8 @@ export class MenuService {
 
     private _menuDataSource$ = new BehaviorSubject<Menu | null>(null);
 
-    private _subs = new Subs();
-
     constructor(
-        private _rest: RestService,
-        private _router: Router
+        private _processImageService: ProcessImageService,
     ) {
         this.currentImage$ = this._currentImageSource$.asObservable();
         this.menuData$ = this._menuDataSource$.asObservable();
@@ -57,52 +51,9 @@ export class MenuService {
         );
     }
 
-    public getImagesForDish(dishName: string): Observable<string[]> {
-        return of(['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcUfB45LB_uSuHtaPofscfJcUnRprRsUz7IA&s']);
-        // Commented code for possible future use of Unsplash API
-        // const headers = new HttpHeaders()
-        //     .set('Authorization', `Client-ID ${environment.unsplashApiKey}`);
-        //
-        // return this._rest.restGET(
-        //     `https://api.unsplash.com/search/photos?query=${encodeURIComponent(dishName + ' food')}&per_page=5`,
-        //     { ...headers }
-        // ).pipe(
-        //     map((response) => response.results.map((result: any) => result.urls.regular))
-        // );
-    }
-
     private _analyzeMenu(imageBase64: string): Observable<Menu> {
-        // Prepare the image
-        // Remove the prefix data:image/jpeg;base64, if present
-        const base64Data = imageBase64.includes('base64,')
-            ? imageBase64.split('base64,')[1]
-            : imageBase64;
-
-        // Create FormData for file upload
-        const formData = new FormData();
-
-        // Convert Base64 to Blob
-        const byteCharacters = atob(base64Data);
-        const byteArrays = [];
-        for (let i = 0; i < byteCharacters.length; i++) {
-            byteArrays.push(byteCharacters.charCodeAt(i));
-        }
-        const byteArray = new Uint8Array(byteArrays);
-        const blob = new Blob([byteArray], { type: 'image/jpeg' });
-
-        // Add blob to FormData
-        formData.append('image', blob, 'menu.jpg');
-
-        // Send request to Django backend
-        return this._rest.restPOST(
-            `${environment.apiBaseUrl}/process-image/`,
-            formData
-        ).pipe(
-            map((response: any) => {
-                const menu = JSON.parse(response.result);
-                this._menuDataSource$.next(menu);
-                return menu;
-            })
+        return this._processImageService.analyzeMenu(imageBase64).pipe(
+            tap((menu) => this._menuDataSource$.next(menu))
         );
     }
 
@@ -111,7 +62,7 @@ export class MenuService {
         const categoryObservables = menu.categories.map((category) =>
             from(category.items).pipe(
                 mergeMap((item) =>
-                    this.getImagesForDish(item.name).pipe(
+                    this._processImageService.getImagesForDish(item.name).pipe(
                         map((images) => ({ ...item, images }))
                     )
                 ),

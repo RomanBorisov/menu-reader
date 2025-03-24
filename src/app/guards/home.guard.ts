@@ -1,11 +1,11 @@
 import { inject } from '@angular/core';
 import { map } from 'rxjs';
-import { MenuService } from '../services/menu.service';
+import { MenuState } from '../states/menu.state';
 import { Router } from '@angular/router';
 import { toMenu } from '../services/router.service';
 
 export const homeGuard = () => {
-    const menuService = inject(MenuService);
+    const menuService = inject(MenuState);
     const router = inject(Router);
 
     return menuService.menuData$.pipe(

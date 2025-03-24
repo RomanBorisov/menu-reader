@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MenuService } from '../../services/menu.service';
+import { MenuState } from '../../states/menu.state';
 import { toMenu } from '../../services/router.service';
 
 @Component({
@@ -14,7 +14,7 @@ import { toMenu } from '../../services/router.service';
 })
 export class ProcessingScreenComponent implements OnInit {
     constructor(
-        private _menuService: MenuService,
+        private _menuService: MenuState,
         private _router: Router
     ) {
     }

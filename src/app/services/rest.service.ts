@@ -1,6 +1,7 @@
 import { HttpClient, HttpContext, HttpEvent, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 type GET_PARAMS = Record<string, string | number | boolean | readonly (string | number | boolean)[]>;
 
@@ -81,7 +82,7 @@ export class RestService {
             context,
         };
 
-        return this._http.request(method, endpoint, httpOptions);
+        return this._http.request(method, `${environment.apiBaseUrl}/${endpoint}`, httpOptions);
     }
 
     private _convertObjectToFormData(

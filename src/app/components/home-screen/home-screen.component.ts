@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
-import { MenuService } from '../../services/menu.service';
+import { MenuState } from '../../states/menu.state';
 import { ImageComponent } from '../image/image.component';
 import { toCamera, toProcessing } from '../../services/router.service';
 
@@ -20,7 +20,7 @@ import { toCamera, toProcessing } from '../../services/router.service';
 export class HomeScreenComponent {
     constructor(
         private _router: Router,
-        private _menuService: MenuService
+        private _menuService: MenuState
     ) {
     }
 

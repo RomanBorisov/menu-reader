@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
-import { MenuService } from './menu.service';
+import { MenuState } from '../states/menu.state';
 
 @Injectable({
     providedIn: 'root',
 })
 export class InitService {
     constructor(
-        private _menuService: MenuService
+        private _menuState: MenuState
     ) {
     }
 
     public init() {
-        this._menuService.init();
+        this._menuState.init();
     }
 }

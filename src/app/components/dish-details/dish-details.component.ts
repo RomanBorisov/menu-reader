@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
-import { MenuService } from '../../services/menu.service';
+import { MenuState } from '../../states/menu.state';
 import { map, switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { MenuItem } from '../../interfaces/menu.interface';
@@ -25,7 +25,7 @@ export class DishDetailsComponent implements OnInit {
 
     constructor(
         private _route: ActivatedRoute,
-        private _menuService: MenuService,
+        private _menuService: MenuState,
     ) {
     }
 

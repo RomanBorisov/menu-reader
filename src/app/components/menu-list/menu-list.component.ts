@@ -4,9 +4,9 @@ import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { Menu, MenuItem } from '../../interfaces/menu.interface';
-import { MenuService } from '../../services/menu.service';
+import { MenuState } from '../../states/menu.state';
 import { toDish, toHome } from '../../services/router.service';
-import { Subs } from '../../services/subs';
+import { Subs } from '../../utils/subs';
 import { MenuListItemComponent } from '../menu-list-item/menu-list-item.component';
 
 @Component({
@@ -27,7 +27,7 @@ export class MenuListComponent implements OnInit, OnDestroy {
 
     constructor(
         private _router: Router,
-        private _menuService: MenuService,
+        private _menuService: MenuState,
     ) {
     }
 

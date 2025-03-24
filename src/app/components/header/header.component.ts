@@ -4,7 +4,7 @@ import { LogoComponent } from '../logo/logo.component';
 import { Router, RouterLinkActive } from '@angular/router';
 import { MatAnchor } from '@angular/material/button';
 import { toHome } from '../../services/router.service';
-import { MenuService } from '../../services/menu.service';
+import { MenuState } from '../../states/menu.state';
 
 @Component({
     selector: 'app-header',
@@ -25,14 +25,14 @@ export class HeaderComponent {
 
     constructor(
         private _router: Router,
-        private _menuService: MenuService
+        private _menuService: MenuState
     ) {
     }
 
     public navigateToHomeAndCleanProcessedOrder() {
         // TODO add a confirmation dialog before navigating to home
         this._router.navigate(toHome).then(() => {
-            this._menuService.clean()
+            this._menuService.clean();
         });
 
     }

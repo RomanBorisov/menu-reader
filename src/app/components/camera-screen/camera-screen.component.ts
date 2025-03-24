@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MenuService } from '../../services/menu.service';
+import { MenuState } from '../../states/menu.state';
 import { toProcessing } from '../../services/router.service';
 
 @Component({
@@ -22,7 +22,7 @@ export class CameraScreenComponent implements OnDestroy, OnInit {
 
     constructor(
         private _router: Router,
-        private _menuService: MenuService
+        private _menuService: MenuState
     ) {
     }
 
